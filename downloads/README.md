@@ -12,6 +12,8 @@ Required fields:
   Authenticode verification.
 - `expectedSignerSubject`: exact certificate subject expected for production
   releases, unless the repository variable `EXPECTED_SIGNER_SUBJECT` is set.
+- `expectedSignerThumbprint`: exact signing certificate thumbprint recorded by
+  the protected release workflow and re-checked on Windows.
 
 Verification:
 
@@ -22,17 +24,18 @@ Verification:
   zero or placeholder signer values, and checks that `sha256` matches the EXE.
 - `.github/workflows/verify-public-download.yml` runs on Windows and fails
   production verification unless Authenticode status is `Valid`, a timestamp
-  certificate is present, and the signer subject exactly matches the configured
-  expected signer.
+  certificate is present, `signtool verify /pa /all` succeeds, and the signer
+  subject and thumbprint exactly match the manifest.
 
 The metadata check also rejects unmanifested `.exe` files and requires
 `index.html` to link exactly once to the manifested executable. A publicly
 linked executable cannot use `production: false`.
 
 The `disabled` state is the only allowed exception: it requires null file,
-hash, and signer fields, `production: false`, no `.exe` under `downloads/`, and
-no executable link in `index.html`. Promotion changes the state to `enabled`
-only when the signed installer and production manifest arrive together.
+hash, signer, and signer thumbprint fields, `production: false`, no `.exe` under
+`downloads/`, and no executable link in `index.html`. Promotion changes the
+state to `enabled` only when the signed installer and production manifest arrive
+together.
 
 GitHub Pages must use the Actions deployment source. The deploy job depends on
 both metadata and Windows Authenticode verification; legacy branch deployment

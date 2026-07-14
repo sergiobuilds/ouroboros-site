@@ -43,8 +43,8 @@ const executableLinks = [...indexHtml.matchAll(/href=["']([^"']+\.exe(?:[?#][^"'
   .map((match) => match[1]);
 
 if (manifest.availability === "disabled") {
-  if (manifest.production !== false || manifest.file !== null || manifest.sha256 !== null || manifest.expectedSignerSubject !== null) {
-    fail("disabled downloads require production=false and null file, hash, and signer");
+  if (manifest.production !== false || manifest.file !== null || manifest.sha256 !== null || manifest.expectedSignerSubject !== null || manifest.expectedSignerThumbprint !== null) {
+    fail("disabled downloads require production=false and null file, hash, signer, and signer thumbprint");
   }
   if (executableFiles.length !== 0 || executableLinks.length !== 0) {
     fail("disabled downloads must publish no executable file or link");
@@ -90,6 +90,10 @@ if (manifest.expectedSignerSubject !== null && manifest.expectedSignerSubject !=
 const configuredSignerSubject = process.env.EXPECTED_SIGNER_SUBJECT || manifest.expectedSignerSubject;
 if (isPlaceholder(configuredSignerSubject)) {
   fail("production manifests require a real expectedSignerSubject or EXPECTED_SIGNER_SUBJECT");
+}
+
+if (!/^[A-F0-9]{40}$/i.test(manifest.expectedSignerThumbprint ?? "")) {
+  fail("production manifests require a 40-character signer certificate thumbprint");
 }
 
 const downloadPath = path.join(repoRoot, "downloads", manifest.file);

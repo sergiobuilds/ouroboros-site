@@ -3,5 +3,6 @@
   "file": null,
   "sha256": null,
   "production": false,
-  "expectedSignerSubject": null
+  "expectedSignerSubject": null,
+  "expectedSignerThumbprint": null
 }

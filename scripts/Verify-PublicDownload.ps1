@@ -1,6 +1,7 @@
 param(
   [string]$ManifestPath = "downloads/OuroborosChatGPT.manifest.json",
-  [string]$ExpectedSignerSubject = $env:EXPECTED_SIGNER_SUBJECT
+  [string]$ExpectedSignerSubject = $env:EXPECTED_SIGNER_SUBJECT,
+  [string]$ExpectedSignerThumbprint = $env:EXPECTED_SIGNER_THUMBPRINT
 )
 
 $ErrorActionPreference = "Stop"
@@ -26,8 +27,8 @@ $manifest = Get-Content -LiteralPath $ManifestPath -Raw | ConvertFrom-Json
 
 if ($manifest.availability -eq 'disabled') {
   $executables = @(Get-ChildItem -LiteralPath (Split-Path -Parent $ManifestPath) -Filter '*.exe' -File)
-  if ($manifest.production -ne $false -or $null -ne $manifest.file -or $null -ne $manifest.sha256 -or $null -ne $manifest.expectedSignerSubject) {
-    Fail "disabled downloads require production=false and null file, hash, and signer"
+  if ($manifest.production -ne $false -or $null -ne $manifest.file -or $null -ne $manifest.sha256 -or $null -ne $manifest.expectedSignerSubject -or $null -ne $manifest.expectedSignerThumbprint) {
+    Fail "disabled downloads require production=false and null file, hash, signer, and signer thumbprint"
   }
   if ($executables.Count -ne 0) {
     Fail "disabled downloads must contain no executable files"
@@ -50,6 +51,13 @@ if ([string]::IsNullOrWhiteSpace($ExpectedSignerSubject)) {
 
 if (Is-PlaceholderSigner $ExpectedSignerSubject) {
   Fail "expected signer subject is missing or a placeholder"
+}
+if ([string]::IsNullOrWhiteSpace($ExpectedSignerThumbprint)) {
+  $ExpectedSignerThumbprint = $manifest.expectedSignerThumbprint
+}
+$ExpectedSignerThumbprint = $ExpectedSignerThumbprint.Replace(' ', '').ToUpperInvariant()
+if ($ExpectedSignerThumbprint -notmatch '^[A-F0-9]{40}$') {
+  Fail "expected signer thumbprint must be a 40-character SHA-1 certificate thumbprint"
 }
 
 $downloadPath = Join-Path (Split-Path -Parent $ManifestPath) $manifest.file
@@ -80,6 +88,11 @@ if ($actualSignerSubject -cne $ExpectedSignerSubject) {
   Fail "signer subject '$actualSignerSubject' does not match expected '$ExpectedSignerSubject'"
 }
 
+$actualSignerThumbprint = $signature.SignerCertificate.Thumbprint.Replace(' ', '').ToUpperInvariant()
+if ($actualSignerThumbprint -cne $ExpectedSignerThumbprint) {
+  Fail "signer thumbprint '$actualSignerThumbprint' does not match expected '$ExpectedSignerThumbprint'"
+}
+
 if ($null -eq $signature.TimeStamperCertificate) {
   Fail "timestamp certificate is missing"
 }
@@ -88,7 +101,21 @@ if (Is-PlaceholderSigner $signature.TimeStamperCertificate.Subject) {
   Fail "timestamp certificate subject is empty, zero, or a placeholder"
 }
 
+$kitsRoot = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10\bin'
+$signTool = Get-ChildItem -Path $kitsRoot -Filter signtool.exe -File -Recurse |
+  Where-Object { $_.FullName -match '\\x64\\signtool\.exe$' } |
+  Sort-Object FullName -Descending |
+  Select-Object -First 1
+if ($null -eq $signTool) {
+  Fail "Windows SDK x64 signtool.exe was not found"
+}
+& $signTool.FullName verify /pa /all /v $downloadPath | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail "signtool trust verification failed"
+}
+
 Write-Host "public download verification ok: $downloadPath"
 Write-Host "sha256: $actualSha256"
 Write-Host "signer: $actualSignerSubject"
+Write-Host "signer thumbprint: $actualSignerThumbprint"
 Write-Host "timestamp: $($signature.TimeStamperCertificate.Subject)"

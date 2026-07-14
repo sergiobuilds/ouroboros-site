@@ -34,6 +34,7 @@ test("download UI follows disabled and enabled manifests", async () => {
         sha256: null,
         production: false,
         expectedSignerSubject: null,
+        expectedSignerThumbprint: null,
       }),
     );
 
@@ -47,6 +48,7 @@ test("download UI follows disabled and enabled manifests", async () => {
         sha256: "0".repeat(64),
         production: true,
         expectedSignerSubject: "CN=Ouro Labs",
+        expectedSignerThumbprint: "A".repeat(40),
       }),
     );
     await runSync(fixture);
@@ -65,6 +67,7 @@ test("download UI follows disabled and enabled manifests", async () => {
         sha256: null,
         production: false,
         expectedSignerSubject: null,
+        expectedSignerThumbprint: null,
       }),
     );
     await runSync(fixture);
