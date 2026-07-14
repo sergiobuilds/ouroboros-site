@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ouroboros — the loop.</title>
+<meta name="description" content="The bottleneck is not AI capability — it is human clarity. Ouroboros by Ouro Labs.">
+<link rel="canonical" href="https://ouroboros.is/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ouroboros.is/">
+<meta property="og:title" content="Ouroboros">
+<meta property="og:description" content="The bottleneck is not AI capability — it is human clarity.">
+<link rel="icon" type="image/png" href="./assets/logo-snake.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<script src="./vendor/react.production.min.js"></script>
+<script src="./vendor/react-dom.production.min.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+@font-face{font-family:'Paperlogy';src:url('fonts/Paperlogy-4Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('fonts/Paperlogy-5Medium.ttf') format('truetype');font-weight:500;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('fonts/Paperlogy-6SemiBold.ttf') format('truetype');font-weight:600;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('fonts/Paperlogy-7Bold.ttf') format('truetype');font-weight:700;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('fonts/Paperlogy-8ExtraBold.ttf') format('truetype');font-weight:800;font-display:swap}
+:root{--bg:#FFFFFF;--ink:#101511;--mute:#6C7570;--line:rgba(16,21,17,.12);--soft:rgba(16,21,17,.045);--accent:#0F2E25;--card:#FFFFFF;--pill:#101511;--pilltxt:#FFFFFF;--ringop:.06;--wash:rgba(49,80,79,.08);--shadow:0 12px 32px rgba(16,21,17,.10)}
+body[data-theme="dark"]{--bg:#0A100E;--ink:#E9E5D4;--mute:#8C917D;--line:rgba(233,229,212,.15);--soft:rgba(233,229,212,.06);--accent:#2F6B4F;--card:#111813;--pill:#E9E5D4;--pilltxt:#0A100E;--ringop:.1;--wash:rgba(159,183,149,.12);--shadow:0 12px 32px rgba(0,0,0,.5)}
+html,body{margin:0;padding:0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(1100px 700px at 50% 16%,var(--wash),transparent 72%)}
+body{background:var(--bg);color:var(--ink);font-family:'Paperlogy',ui-sans-serif,-apple-system,"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;transition:background-color .35s ease,color .35s ease;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;word-break:keep-all;overflow-wrap:break-word}
+p{text-wrap:pretty}
+h1,h2,h3{text-wrap:balance}
+a{color:var(--ink);text-decoration:none;transition:color .15s ease}
+a:hover{color:var(--accent)}
+button{font-family:inherit}
+::selection{background:var(--accent);color:var(--bg)}
+@keyframes menuIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.hero-title{font-family:'Noto Serif KR',Georgia,'Times New Roman',serif!important;font-weight:700!important;letter-spacing:-0.01em!important}
+.mobile-menu-btn{display:none;width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:none;cursor:pointer;align-items:center;justify-content:center;color:var(--ink)}
+@media (max-width:760px){.nav-center{display:none!important}.cta-outline{display:none!important}.mobile-menu-btn{display:flex!important}.theme-btn{display:none!important}.header-cta{display:none!important}.wordmark-text{display:none!important}header>div:first-child{gap:10px!important;padding:0 14px!important}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column">
+
+  <header style="position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)">
+    <div style="position:relative;max-width:1200px;margin:0 auto;padding:0 clamp(16px,4vw,32px);height:64px;display:flex;align-items:center;gap:clamp(14px,2.5vw,32px)">
+      <a href="#/" aria-label="Ouroboros home" style="display:flex;align-items:center;gap:10px;font-weight:650;font-size:16px;letter-spacing:-0.01em">
+        <img src="assets/logo-snake.png" alt="" style="height:28px;width:auto;display:block">
+        <span class="wordmark-text">Ouroboros</span>
+      </a>
+
+      <nav class="nav-center" aria-label="Main" style="margin-left:auto;display:flex;align-items:center;gap:2px">
+        <div style="position:relative" onMouseEnter="{{openCompany}}" onMouseLeave="{{closeMenus}}" onBlur="{{blurClose}}">
+          <button onClick="{{toggleCompany}}" aria-expanded="{{companyOpen}}" aria-haspopup="true" style="display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-size:14px;color:var(--ink);padding:8px 12px;border-radius:999px" style-hover="background:var(--soft)">
+            {{navAbout}}
+            <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </button>
+          <sc-if value="{{companyOpen}}" hint-placeholder-val="{{false}}">
+            <div style="position:absolute;top:100%;left:0;padding-top:6px">
+            <div role="menu" style="min-width:170px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:var(--shadow);animation:menuIn .15s ease;display:flex;flex-direction:column;gap:2px">
+              <a role="menuitem" href="#/about" style="display:block;padding:9px 12px;border-radius:8px;font-size:14px" style-hover="background:var(--soft);color:var(--ink)">{{navMission}}</a>
+              <a role="menuitem" href="#/contact" style="display:block;padding:9px 12px;border-radius:8px;font-size:14px" style-hover="background:var(--soft);color:var(--ink)">{{navContact}}</a>
+            </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="position:relative" onMouseEnter="{{openProducts}}" onMouseLeave="{{closeMenus}}" onBlur="{{blurClose}}">
+          <button onClick="{{toggleProducts}}" aria-expanded="{{productsOpen}}" aria-haspopup="true" style="display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-size:14px;color:var(--ink);padding:8px 12px;border-radius:999px" style-hover="background:var(--soft)">
+            {{navProducts}}
+            <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </button>
+          <sc-if value="{{productsOpen}}" hint-placeholder-val="{{false}}">
+            <div style="position:absolute;top:100%;left:0;padding-top:6px">
+            <div role="menu" style="min-width:200px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:var(--shadow);animation:menuIn .15s ease;display:flex;flex-direction:column;gap:2px">
+              <a role="menuitem" href="#/desktop" style="display:block;padding:9px 12px;border-radius:8px;font-size:14px" style-hover="background:var(--soft);color:var(--ink)">Ouroboros for ChatGPT</a>
+              <a role="menuitem" href="#/core" style="display:block;padding:9px 12px;border-radius:8px;font-size:14px" style-hover="background:var(--soft);color:var(--ink)">Ouroboros Core</a>
+            </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <a href="#/news" style="font-size:14px;padding:8px 12px;border-radius:999px" style-hover="background:var(--soft);color:var(--ink)">{{navNews}}</a>
+      </nav>
+
+      <div style="display:flex;align-items:center;gap:10px">
+        <a class="header-cta" href="#/desktop" style="font-size:13.5px;font-weight:550;padding:9px 17px;border-radius:999px;background:var(--pill);color:var(--pilltxt);white-space:nowrap" style-hover="background:var(--accent);color:var(--bg)">{{ctaStart}}</a>
+        <button class="theme-btn" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}" style="width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink)" style-hover="background:var(--soft)">
+          <svg width="15" height="15" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.5"></circle><path d="M10 3 a7 7 0 0 0 0 14 Z" fill="currentColor"></path></svg>
+        </button>
+        <button onClick="{{toggleLang}}" aria-label="{{langAria}}" style="height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:none;cursor:pointer;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--ink)" style-hover="background:var(--soft)">{{langLabel}}</button>
+        <button class="mobile-menu-btn" onClick="{{toggleMobile}}" aria-expanded="{{mobileOpen}}" aria-label="Menu">
+          <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg>
+        </button>
+      </div>
+    </div>
+    <sc-if value="{{mobileOpen}}" hint-placeholder-val="{{false}}">
+      <nav aria-label="Mobile" style="border-top:1px solid var(--line);background:var(--card);animation:menuIn .15s ease;display:flex;flex-direction:column;padding:8px clamp(16px,4vw,32px) 14px">
+        <span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:10px 4px 4px">{{navAbout}}</span>
+        <a href="#/about" style="padding:11px 4px;font-size:15px;border-bottom:1px solid var(--line)">{{navMission}}</a>
+        <a href="#/contact" style="padding:11px 4px;font-size:15px;border-bottom:1px solid var(--line)">{{navContact}}</a>
+        <span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:14px 4px 4px">{{navProducts}}</span>
+        <a href="#/desktop" style="padding:11px 4px;font-size:15px;border-bottom:1px solid var(--line)">Ouroboros for ChatGPT</a>
+        <a href="#/core" style="padding:11px 4px;font-size:15px;border-bottom:1px solid var(--line)">Ouroboros Core</a>
+        <a href="#/news" style="padding:13px 4px;font-size:15px;font-weight:600">{{navNews}}</a>
+      </nav>
+    </sc-if>
+  </header>
+
+  <main style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column">
+
+    <sc-if value="{{isHome}}" hint-placeholder-val="{{true}}">
+      <section data-screen-label="Home" style="display:flex;flex-direction:column;animation:fadeUp .5s ease">
+        <div style="min-height:calc(100vh - 64px);max-width:980px;width:100%;margin:0 auto;box-sizing:border-box;padding:clamp(40px,8vh,90px) 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+          <img src="assets/logo-snake.png" alt="Ouroboros serpent" style="width:min(420px,74vw);height:auto;display:block;filter:drop-shadow(0 28px 44px rgba(20,32,28,.22));animation:fadeUp .7s ease both">
+          <h1 class="hero-title" style="margin:38px 0 0;font-size:clamp(42px,6.6vw,80px);font-weight:800;letter-spacing:-0.02em;line-height:1.14;animation:fadeUp .7s ease .12s both">{{heroLead}}<br><span style="color:var(--accent);opacity:{{wordOpacity}};transition:opacity .42s ease">{{heroWord}}</span></h1>
+          <p style="margin:26px 0 0;font-size:clamp(15px,1.5vw,18px);color:var(--mute);line-height:1.6;letter-spacing:.01em;animation:fadeUp .7s ease .24s both">{{homeSub}}</p>
+          <div style="margin-top:36px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;animation:fadeUp .7s ease .36s both">
+            <a href="#/desktop" style="font-size:15px;font-weight:600;padding:13px 26px;border-radius:999px;background:var(--accent);color:#FFFFFF;transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease" style-hover="background:var(--ink);color:var(--bg);transform:translateY(-2px);box-shadow:var(--shadow)">Ouroboros for ChatGPT →</a>
+            <a href="{{chatgptUrl}}" target="_blank" rel="noopener" style="font-size:15px;font-weight:600;padding:13px 26px;border-radius:999px;border:1px solid var(--line);transition:transform .18s ease,border-color .18s ease" style-hover="border-color:var(--ink);color:var(--ink);transform:translateY(-2px)">{{homeChatgpt}}</a>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isDesktop}}" hint-placeholder-val="{{false}}">
+      <section data-screen-label="Desktop" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(80px,14vh,140px) 24px;gap:26px;animation:fadeUp .5s ease">
+        <div style="font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">{{prodLabel}}</div>
+        <h1 style="margin:0;font-size:clamp(36px,5.4vw,64px);font-weight:800;letter-spacing:-0.02em;line-height:1.08">Ouroboros for ChatGPT</h1>
+        <p style="margin:0;font-size:clamp(16px,1.5vw,19px);color:var(--mute);max-width:560px;line-height:1.55">{{deskSub}}</p>
+        <a href="./downloads/OuroborosChatGPT.exe" download="OuroborosChatGPT.exe" style="margin-top:8px;font-size:15.5px;font-weight:600;padding:15px 30px;border-radius:999px;background:var(--pill);color:var(--pilltxt)" style-hover="background:var(--accent);color:var(--bg)">{{deskDl}}</a>
+        <p style="margin:0;font-size:14px;color:var(--mute)">{{deskPre}} <a href="{{chatgptUrl}}" target="_blank" rel="noopener" style="color:var(--ink);border-bottom:1px solid var(--line)" style-hover="color:var(--accent)">{{deskPreLink}}</a></p>
+        <p style="margin:0;font-size:14px;color:var(--mute)">{{deskSrcPre}} <a href="https://github.com/Q00/ouroboros" target="_blank" rel="noopener" style="color:var(--ink);border-bottom:1px solid var(--line)" style-hover="color:var(--accent)">{{deskSrcLink}}</a></p>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isCore}}" hint-placeholder-val="{{false}}">
+      <section data-screen-label="Core" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(80px,14vh,140px) 24px;gap:26px;animation:fadeUp .5s ease">
+        <div style="font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">{{prodLabel}}</div>
+        <h1 style="margin:0;font-size:clamp(36px,5.4vw,64px);font-weight:800;letter-spacing:-0.02em;line-height:1.08">Ouroboros Core</h1>
+        <p style="margin:0;font-size:clamp(16px,1.5vw,19px);color:var(--mute);max-width:620px;line-height:1.6">{{coreSub}}<span style="display:block;margin-top:10px;color:var(--ink);font-weight:550">Question → Spec → Run → Evaluate → Evolve.</span></p>
+        <a href="https://github.com/Q00/ouroboros" target="_blank" rel="noopener" style="margin-top:8px;font-size:15.5px;font-weight:600;padding:15px 30px;border-radius:999px;background:var(--pill);color:var(--pilltxt)" style-hover="background:var(--accent);color:var(--bg)">{{coreBtn}}</a>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isAbout}}" hint-placeholder-val="{{false}}">
+      <section data-screen-label="About" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:clamp(72px,11vh,120px) 24px 100px;gap:26px;animation:fadeUp .5s ease">
+        <div style="font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">{{aboutLabel}}</div>
+        <h1 style="margin:0;font-size:clamp(36px,5.4vw,64px);font-weight:800;letter-spacing:-0.02em;line-height:1.08;max-width:14em;text-align:center">{{aboutH1}}</h1>
+        <p style="margin:0;font-size:clamp(16px,1.5vw,19px);color:var(--mute);max-width:600px;line-height:1.6;text-align:center">{{aboutSub}}</p>
+        <div style="margin-top:clamp(28px,6vh,64px);max-width:960px;width:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(32px,5vw,64px)">
+          <figure style="margin:0;flex:none;display:flex;flex-direction:column;gap:12px;max-width:min(360px,88vw)">
+            <img src="assets/ouroboros-engraving.png" alt="{{philCap}}" style="width:100%;height:auto;display:block;border:1px solid var(--line);box-shadow:var(--shadow)">
+            <figcaption style="font-size:12.5px;color:var(--mute);letter-spacing:.02em;text-align:center">{{philCap}}</figcaption>
+          </figure>
+          <div style="flex:1;min-width:280px;max-width:460px;display:flex;flex-direction:column;gap:20px;text-align:left">
+            <p style="margin:0;font-size:17px;line-height:1.75;color:var(--ink)">{{philP1}}</p>
+            <p style="margin:0;font-size:17px;line-height:1.75;color:var(--ink)">{{philP2}}</p>
+            <p style="margin:0;font-size:15px;line-height:1.6;color:var(--accent);font-weight:600">{{philP3}}</p>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isContact}}" hint-placeholder-val="{{false}}">
+      <section data-screen-label="Contact" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(80px,14vh,140px) 24px;gap:26px;animation:fadeUp .5s ease">
+        <h1 style="margin:0;font-size:clamp(36px,5.4vw,64px);font-weight:800;letter-spacing:-0.02em;line-height:1.08">{{contactH1}}</h1>
+        <p style="margin:0;font-size:clamp(16px,1.5vw,19px);color:var(--mute);max-width:560px;line-height:1.55">{{contactSub}}</p>
+        <a href="https://github.com/Q00/ouroboros" target="_blank" rel="noopener" style="margin-top:8px;width:min(440px,100%);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;border:1px solid var(--line);border-radius:14px;background:var(--card)" style-hover="border-color:var(--accent);color:var(--ink)">
+          <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px"><span style="font-weight:650;font-size:15px">GitHub</span><span style="font-size:13.5px;color:var(--mute)">github.com/Q00/ouroboros</span></span>
+          <span aria-hidden="true" style="color:var(--accent);font-size:18px">→</span>
+        </a>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isNews}}" hint-placeholder-val="{{false}}">
+      <section data-screen-label="News" style="flex:1;width:min(680px,100%);margin:0 auto;padding:clamp(72px,12vh,120px) 24px 100px;display:flex;flex-direction:column;gap:44px;box-sizing:border-box;animation:fadeUp .5s ease">
+        <h1 style="margin:0;font-size:clamp(36px,5vw,56px);font-weight:800;letter-spacing:-0.02em">{{newsH1}}</h1>
+        <article style="display:flex;flex-direction:column;gap:18px;border-top:1px solid var(--line);padding-top:36px">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--mute)">
+            <span style="font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:3px 10px">product</span>
+            <span>{{newsDate}}</span>
+            <span aria-hidden="true">·</span>
+            <span>Ouro Labs</span>
+          </div>
+          <h2 style="margin:0;font-size:clamp(26px,3.2vw,36px);font-weight:800;letter-spacing:-0.02em;line-height:1.155">{{newsTitle}}</h2>
+          <div style="display:flex;flex-direction:column;gap:16px;font-size:16.5px;line-height:1.65;color:var(--ink)">
+            <p style="margin:0">{{newsP1}}</p>
+            <p style="margin:0">{{newsP2}}</p>
+            <p style="margin:0">{{newsP3}}</p>
+            <p style="margin:0;font-weight:550;color:var(--accent)">{{newsP4}}</p>
+          </div>
+        </article>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isTerms}}" hint-placeholder-val="{{false}}">
+      <section data-screen-label="Terms" style="flex:1;width:min(680px,100%);margin:0 auto;padding:clamp(72px,12vh,120px) 24px 100px;display:flex;flex-direction:column;gap:28px;box-sizing:border-box;animation:fadeUp .5s ease">
+        <h1 style="margin:0;font-size:clamp(36px,5vw,56px);font-weight:800;letter-spacing:-0.02em">{{termsH1}}</h1>
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:16.5px;line-height:1.65;color:var(--mute);border-top:1px solid var(--line);padding-top:28px">
+          <p style="margin:0">{{termsP1}}</p>
+          <p style="margin:0">{{termsP2a}}<a href="https://github.com/Q00/ouroboros" target="_blank" rel="noopener" style="color:var(--ink);border-bottom:1px solid var(--line)" style-hover="color:var(--accent)">{{termsP2link}}</a>{{termsP2b}}</p>
+          <p style="margin:0">{{termsP3}}</p>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{isPrivacy}}" hint-placeholder-val="{{false}}">
+      <section data-screen-label="Privacy" style="flex:1;width:min(680px,100%);margin:0 auto;padding:clamp(72px,12vh,120px) 24px 100px;display:flex;flex-direction:column;gap:28px;box-sizing:border-box;animation:fadeUp .5s ease">
+        <h1 style="margin:0;font-size:clamp(36px,5vw,56px);font-weight:800;letter-spacing:-0.02em">{{privacyH1}}</h1>
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:16.5px;line-height:1.65;color:var(--mute);border-top:1px solid var(--line);padding-top:28px">
+          <p style="margin:0">{{privP1}}</p>
+          <p style="margin:0">{{privP2}}</p>
+          <p style="margin:0">{{privP3}}</p>
+        </div>
+      </section>
+    </sc-if>
+
+  </main>
+
+  <footer style="position:relative;z-index:1;border-top:1px solid var(--line)">
+    <div style="max-width:1200px;margin:0 auto;padding:52px clamp(16px,4vw,32px) 28px;display:flex;flex-wrap:wrap;gap:40px clamp(48px,6vw,88px)">
+      <div style="display:flex;flex-direction:column;gap:10px;min-width:180px">
+        <span style="display:flex;align-items:center;gap:8px;font-weight:650;font-size:15px">
+          <img src="assets/logo-snake.png" alt="" style="height:18px;width:auto;display:block">
+          Ouroboros
+        </span>
+        <span style="font-size:13px;color:var(--mute)">© 2026 Ouro Labs</span>
+      </div>
+      <nav aria-label="Products" style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)">{{ftProducts}}</span>
+        <a href="#/desktop" style="font-size:14px">For ChatGPT</a>
+        <a href="#/core" style="font-size:14px">Core</a>
+      </nav>
+      <nav aria-label="Company" style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)">{{ftCompany}}</span>
+        <a href="#/about" style="font-size:14px">{{navAbout}}</a>
+        <a href="#/contact" style="font-size:14px">{{navContact}}</a>
+        <a href="#/news" style="font-size:14px">{{navNews}}</a>
+      </nav>
+      <nav aria-label="Legal" style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)">{{ftLegal}}</span>
+        <a href="#/terms" style="font-size:14px">{{termsH1}}</a>
+        <a href="#/privacy" style="font-size:14px">{{privacyH1}}</a>
+        <a href="https://github.com/Q00/ouroboros" target="_blank" rel="noopener" style="font-size:14px">GitHub</a>
+      </nav>
+    </div>
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(16px,4vw,32px) 30px;font-size:12.5px;color:var(--mute)">{{disclaimer}}</div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#375E4E&quot;,&quot;options&quot;:[&quot;#375E4E&quot;,&quot;#2E6B58&quot;,&quot;#31504F&quot;,&quot;#B99B5E&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Brand&quot;}}">
+class Component extends DCLogic {
+  state = { route: 'home', theme: 'light', lang: 'en', wordIndex: 0, wordVisible: true, menu: null };
+  words = {
+    en: ['a question.', 'the loop.', 'what you meant.', 'you, clarified.'],
+    ko: ['질문입니다.', '루프입니다.', '당신의 의도입니다.', '더 명확해진 당신입니다.']
+  };
+  T = {
+    en: {
+      heroLead: 'Ouroboros is', heroMid: 'is',
+      navAbout: 'About', navMission: 'Our mission', navContact: 'Contact', navProducts: 'Products', navNews: 'News', ctaStart: 'Get started',
+      homeSub: 'The bottleneck is not AI capability — it is human clarity.', homeCore: 'View the open source',
+      homeChatgpt: 'Get ChatGPT Desktop', deskPre: 'Needs the ChatGPT desktop app —', deskPreLink: 'get it here.',
+      prodLabel: 'Product',
+      deskSub: 'The evolving loop, on your desktop.', deskDl: 'Download for Windows',
+      deskSrcPre: 'Prefer the source?', deskSrcLink: 'Get Ouroboros Core on GitHub.',
+      coreSub: 'The open-source engine behind Ouroboros for ChatGPT.', coreBtn: 'View on GitHub',
+      aboutLabel: 'Our mission', aboutH1: 'Fix the human, not the machine.',
+      aboutSub: 'Ouro Labs builds an open-source workflow that evolves what you meant — not just what you said.',
+      philP1: 'The ouroboros — the serpent that devours its own tail — served the alchemists for centuries as a mark of renewal: nothing truly ends, everything feeds the next beginning.',
+      philP2: 'We build software the same way. Every answer returns to the question that made it. Every run leaves an evaluation, and every evaluation feeds the next generation.',
+      philP3: 'The loop is not repetition — it is refinement.',
+      philCap: 'The ouroboros dragon, alchemical engraving — Lucas Jennis, 1625',
+      contactH1: 'Let\u2019s talk.', contactSub: 'Products, partnerships, questions — tell us what you\u2019re working on.',
+      newsH1: 'News', newsDate: 'July 15, 2026', newsTitle: 'Introducing Ouroboros for ChatGPT',
+      newsP1: 'Most AI coding fails at the input, not the output. The bottleneck is not AI capability — it is human clarity.',
+      newsP2: 'Ouroboros for ChatGPT starts with a question instead of a prompt. Every run leaves an evaluation, and every evaluation becomes the input for the next generation.',
+      newsP3: 'Ouroboros for ChatGPT is available for Windows. The engine behind it, Ouroboros Core, is open source.',
+      newsP4: 'The serpent does not repeat — it evolves.',
+      termsH1: 'Terms', termsP1: 'Ouroboros is provided as-is, without warranty of any kind.',
+      termsP2a: 'The license for Ouroboros Core lives in the ', termsP2link: 'GitHub repository', termsP2b: '.',
+      termsP3: 'Ouroboros is not affiliated with any cryptocurrency or token.',
+      privacyH1: 'Privacy',
+      privP1: 'This site collects nothing. No cookies, no analytics, no accounts.',
+      privP2: 'Your theme preference stays in your browser.',
+      privP3: 'Downloads are served through GitHub.',
+      ftProducts: 'Products', ftCompany: 'Company', ftLegal: 'Legal',
+      disclaimer: 'Ouroboros is an open-source developer tool and is not affiliated with any cryptocurrency or token.'
+    },
+    ko: {
+      heroLead: 'Ouroboros는', heroMid: '는',
+      navAbout: '소개', navMission: '우리의 미션', navContact: '문의하기', navProducts: '제품', navNews: '소식', ctaStart: '시작하기',
+      homeSub: '병목은 AI의 능력이 아니라, 인간의 명확함입니다.', homeCore: '오픈소스 보기',
+      homeChatgpt: 'ChatGPT 데스크톱 설치', deskPre: '먼저 ChatGPT 데스크톱 앱이 필요합니다 —', deskPreLink: '여기서 설치',
+      prodLabel: '제품',
+      deskSub: '당신의 데스크톱 위, 진화하는 루프.', deskDl: 'Windows용 다운로드',
+      deskSrcPre: '소스가 더 편하신가요?', deskSrcLink: 'GitHub에서 Ouroboros Core 받기',
+      coreSub: 'Ouroboros for ChatGPT를 움직이는 오픈소스 엔진.', coreBtn: 'GitHub에서 보기',
+      aboutLabel: '우리의 미션', aboutH1: '기계가 아니라, 사람을 고칩니다.',
+      aboutSub: 'Ouro Labs는 당신이 말한 것이 아니라, 의도한 것을 진화시키는 오픈소스 워크플로우를 만듭니다.',
+      philP1: '자신의 꼬리를 삼키는 뱀, 우로보로스는 수 세기 동안 연금술사들에게 갱신의 상징이었습니다. 진정으로 끝나는 것은 없으며, 모든 것은 다음 시작의 양분이 됩니다.',
+      philP2: '우리는 소프트웨어를 같은 방식으로 만듭니다. 모든 답은 그것을 만든 질문으로 되돌아갑니다. 모든 실행은 평가를 남기고, 모든 평가는 다음 세대를 키웁니다.',
+      philP3: '루프는 반복이 아니라, 정제입니다.',
+      philCap: '우로보로스 용, 연금술 판화 — Lucas Jennis, 1625',
+      contactH1: '이야기 나눠요.', contactSub: '제품, 파트너십, 궁금한 점 — 무엇을 만들고 계신지 들려주세요.',
+      newsH1: '소식', newsDate: '2026년 7월 15일', newsTitle: 'Ouroboros for ChatGPT를 소개합니다',
+      newsP1: '대부분의 AI 코딩은 출력이 아니라 입력에서 실패합니다. 병목은 AI의 능력이 아니라, 인간의 명확함입니다.',
+      newsP2: 'Ouroboros for ChatGPT는 프롬프트 대신 질문에서 시작합니다. 모든 실행은 평가를 남기고, 모든 평가는 다음 세대의 입력이 됩니다.',
+      newsP3: 'Ouroboros for ChatGPT는 Windows에서 사용할 수 있습니다. 그 엔진인 Ouroboros Core는 오픈소스입니다.',
+      newsP4: '뱀은 반복하지 않습니다 — 진화합니다.',
+      termsH1: '이용약관', termsP1: 'Ouroboros는 어떠한 보증 없이 있는 그대로 제공됩니다.',
+      termsP2a: 'Ouroboros Core의 라이선스는 ', termsP2link: 'GitHub 저장소', termsP2b: '에서 확인할 수 있습니다.',
+      termsP3: 'Ouroboros는 어떤 암호화폐나 토큰과도 관련이 없습니다.',
+      privacyH1: '개인정보',
+      privP1: '이 사이트는 아무것도 수집하지 않습니다. 쿠키도, 분석도, 계정도 없습니다.',
+      privP2: '테마 설정은 브라우저에만 저장됩니다.',
+      privP3: '다운로드는 GitHub를 통해 제공됩니다.',
+      ftProducts: '제품', ftCompany: '회사', ftLegal: '법적 고지',
+      disclaimer: 'Ouroboros는 오픈소스 개발자 도구이며, 어떤 암호화폐나 토큰과도 관련이 없습니다.'
+    }
+  };
+
+  componentDidMount() {
+    const saved = localStorage.getItem('ouro-theme');
+    const theme = saved === 'light' ? 'light' : 'dark';
+    document.body.dataset.theme = theme;
+    const lang = localStorage.getItem('ouro-lang') === 'en' ? 'en' : 'ko';
+    document.documentElement.lang = lang;
+    this.setState({ theme, lang });
+
+    this._onHash = () => {
+      const r = (location.hash || '').replace(/^#\/?/, '') || 'home';
+      const valid = ['home', 'desktop', 'core', 'about', 'contact', 'news', 'terms', 'privacy'];
+      this.setState({ route: valid.includes(r) ? r : 'home', menu: null });
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener('hashchange', this._onHash);
+    this._onHash();
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduced) {
+      this._timer = setInterval(() => {
+        this.setState({ wordVisible: false });
+        this._swap = setTimeout(() => {
+          this.setState(s => ({ wordIndex: (s.wordIndex + 1) % this.words[s.lang].length, wordVisible: true }));
+        }, 430);
+      }, 4200);
+    }
+
+    this._onKey = (e) => { if (e.key === 'Escape') this.setState({ menu: null }); };
+    window.addEventListener('keydown', this._onKey);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this._timer);
+    clearTimeout(this._swap);
+    window.removeEventListener('hashchange', this._onHash);
+    window.removeEventListener('keydown', this._onKey);
+  }
+
+  renderVals() {
+    const s = this.state;
+
+    // tweakable props -> CSS vars
+    // only override --accent when user picked a non-default color (else theme CSS wins)
+    if (this.props.accentColor && this.props.accentColor.toLowerCase() !== '#375e4e') {
+      document.body.style.setProperty('--accent', this.props.accentColor);
+    } else {
+      document.body.style.removeProperty('--accent');
+    }
+
+    return {
+      isHome: s.route === 'home',
+      isDesktop: s.route === 'desktop',
+      isCore: s.route === 'core',
+      isAbout: s.route === 'about',
+      isContact: s.route === 'contact',
+      isNews: s.route === 'news',
+      isTerms: s.route === 'terms',
+      isPrivacy: s.route === 'privacy',
+
+      ...this.T[s.lang],
+      heroWord: this.words[s.lang][s.wordIndex % this.words[s.lang].length],
+      wordOpacity: s.wordVisible ? 1 : 0,
+
+      chatgptUrl: s.lang === 'ko' ? 'https://chatgpt.com/ko-KR/download/' : 'https://chatgpt.com/download/',
+      langLabel: s.lang === 'en' ? '한국어' : 'EN',
+      langAria: s.lang === 'en' ? '한국어로 전환' : 'Switch to English',
+      toggleLang: () => {
+        const l = s.lang === 'en' ? 'ko' : 'en';
+        localStorage.setItem('ouro-lang', l);
+        document.documentElement.lang = l;
+        this.setState({ lang: l });
+      },
+
+      themeLabel: s.theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme',
+      toggleTheme: () => {
+        const t = s.theme === 'light' ? 'dark' : 'light';
+        localStorage.setItem('ouro-theme', t);
+        document.body.dataset.theme = t;
+        this.setState({ theme: t });
+      },
+
+      productsOpen: s.menu === 'products',
+      companyOpen: s.menu === 'company',
+      mobileOpen: s.menu === 'mobile',
+      toggleMobile: () => this.setState(st => ({ menu: st.menu === 'mobile' ? null : 'mobile' })),
+      openProducts: () => this.setState({ menu: 'products' }),
+      openCompany: () => this.setState({ menu: 'company' }),
+      closeMenus: () => this.setState({ menu: null }),
+      toggleProducts: () => this.setState(st => ({ menu: st.menu === 'products' ? null : 'products' })),
+      toggleCompany: () => this.setState(st => ({ menu: st.menu === 'company' ? null : 'company' })),
+      blurClose: (e) => {
+        if (e.currentTarget && !e.currentTarget.contains(e.relatedTarget)) this.setState({ menu: null });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
+
