@@ -21,7 +21,10 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "20"
-      - run: node scripts/check-download-metadata.mjs
+      - run: |
+          node --test scripts/sync-download-ui.test.mjs
+          node scripts/sync-download-ui.mjs --check
+          node scripts/check-download-metadata.mjs
 
   authenticode:
     name: Windows Authenticode release gate

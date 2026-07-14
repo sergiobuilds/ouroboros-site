@@ -15,6 +15,9 @@ Required fields:
 
 Verification:
 
+- `node scripts/sync-download-ui.mjs --check` requires the public button and
+  localized label to match the manifest state. The signed promotion workflow
+  runs the same script without `--check` after staging a production manifest.
 - `node scripts/check-download-metadata.mjs` validates manifest shape, rejects
   zero or placeholder signer values, and checks that `sha256` matches the EXE.
 - `.github/workflows/verify-public-download.yml` runs on Windows and fails
@@ -38,4 +41,5 @@ and hash check` and `Windows Authenticode release gate`, and require CODEOWNERS
 review for workflow, script, download, and link changes.
 
 The download remains disabled until it is replaced by a signed promotion
-artifact.
+artifact. Promotion must commit the signed executable, manifest, and synchronized
+`index.html` together.
