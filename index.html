@@ -135,7 +135,7 @@ button{font-family:inherit}
         <div style="font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">{{prodLabel}}</div>
         <h1 style="margin:0;font-size:clamp(36px,5.4vw,64px);font-weight:800;letter-spacing:-0.02em;line-height:1.08">Ouroboros for ChatGPT</h1>
         <p style="margin:0;font-size:clamp(16px,1.5vw,19px);color:var(--mute);max-width:560px;line-height:1.55">{{deskSub}}</p>
-        <a href="./downloads/OuroborosChatGPT.exe" download="OuroborosChatGPT.exe" style="margin-top:8px;font-size:15.5px;font-weight:600;padding:15px 30px;border-radius:999px;background:var(--pill);color:var(--pilltxt)" style-hover="background:var(--accent);color:var(--bg)">{{deskDl}}</a>
+        <span data-windows-download-control aria-disabled="true" style="margin-top:8px;font-size:15.5px;font-weight:600;padding:15px 30px;border-radius:999px;background:var(--soft);color:var(--mute)">{{deskDl}}</span>
         <p style="margin:0;font-size:14px;color:var(--mute)">{{deskPre}} <a href="{{chatgptUrl}}" target="_blank" rel="noopener" style="color:var(--ink);border-bottom:1px solid var(--line)" style-hover="color:var(--accent)">{{deskPreLink}}</a></p>
         <p style="margin:0;font-size:14px;color:var(--mute)">{{deskSrcPre}} <a href="https://github.com/Q00/ouroboros" target="_blank" rel="noopener" style="color:var(--ink);border-bottom:1px solid var(--line)" style-hover="color:var(--accent)">{{deskSrcLink}}</a></p>
       </section>
@@ -271,7 +271,7 @@ class Component extends DCLogic {
       homeSub: 'The bottleneck is not AI capability — it is human clarity.', homeCore: 'View the open source',
       homeChatgpt: 'Get ChatGPT Desktop', deskPre: 'Needs the ChatGPT desktop app —', deskPreLink: 'get it here.',
       prodLabel: 'Product',
-      deskSub: 'The evolving loop, on your desktop.', deskDl: 'Download for Windows',
+      deskSub: 'The evolving loop, on your desktop.', deskDl: 'Windows download temporarily unavailable',
       deskSrcPre: 'Prefer the source?', deskSrcLink: 'Get Ouroboros Core on GitHub.',
       coreSub: 'The open-source engine behind Ouroboros for ChatGPT.', coreBtn: 'View on GitHub',
       aboutLabel: 'Our mission', aboutH1: 'Fix the human, not the machine.',
@@ -302,7 +302,7 @@ class Component extends DCLogic {
       homeSub: '병목은 AI의 능력이 아니라, 인간의 명확함입니다.', homeCore: '오픈소스 보기',
       homeChatgpt: 'ChatGPT 데스크톱 설치', deskPre: '먼저 ChatGPT 데스크톱 앱이 필요합니다 —', deskPreLink: '여기서 설치',
       prodLabel: '제품',
-      deskSub: '당신의 데스크톱 위, 진화하는 루프.', deskDl: 'Windows용 다운로드',
+      deskSub: '당신의 데스크톱 위, 진화하는 루프.', deskDl: 'Windows 다운로드 준비 중',
       deskSrcPre: '소스가 더 편하신가요?', deskSrcLink: 'GitHub에서 Ouroboros Core 받기',
       coreSub: 'Ouroboros for ChatGPT를 움직이는 오픈소스 엔진.', coreBtn: 'GitHub에서 보기',
       aboutLabel: '우리의 미션', aboutH1: '기계가 아니라, 사람을 고칩니다.',
@@ -428,4 +428,3 @@ class Component extends DCLogic {
 </script>
 </body>
 </html>
-
